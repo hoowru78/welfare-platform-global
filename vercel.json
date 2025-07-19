@@ -1,0 +1,161 @@
+{
+  "version": 2,
+  "name": "global-senior-welfare-website",
+  "alias": ["globalseniorwelfare.org", "www.globalseniorwelfare.org"],
+  "regions": ["all"],
+  "github": {
+    "enabled": true,
+    "autoAlias": true
+  },
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "origin-when-cross-origin"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:; frame-ancestors 'none';"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "https://globalseniorwelfare.org"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization, Accept-Language"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|otf))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/korean",
+      "destination": "/ko",
+      "permanent": true
+    },
+    {
+      "source": "/english",
+      "destination": "/en",
+      "permanent": true
+    },
+    {
+      "source": "/spanish",
+      "destination": "/es",
+      "permanent": true
+    },
+    {
+      "source": "/japanese",
+      "destination": "/ja",
+      "permanent": true
+    },
+    {
+      "source": "/chinese",
+      "destination": "/zh",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/api/robots"
+    },
+    {
+      "source": "/healthcheck",
+      "destination": "/api/health"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "NEXT_PUBLIC_SITE_URL": "https://globalseniorwelfare.org",
+    "NEXT_PUBLIC_ENVIRONMENT": "production",
+    "NEXT_PUBLIC_VERSION": "1.0.0"
+  },
+  "crons": [
+    {
+      "path": "/api/cron/accessibility-check",
+      "schedule": "0 9 * * 1"
+    },
+    {
+      "path": "/api/cron/performance-report", 
+      "schedule": "0 0 1 * *"
+    },
+    {
+      "path": "/api/cron/update-translations",
+      "schedule": "0 2 * * 0"
+    }
+  ],
+  "functions": {
+    "src/app/**/*.{js,ts,tsx}": {
+      "maxDuration": 30
+    },
+    "src/app/api/**/*.{js,ts}": {
+      "maxDuration": 60
+    }
+  },
+  "routes": [
+    {
+      "src": "/(ko|en|es|ja|zh|de|fr|it|pt|ru|hi|ar|th|vi|id)/(.*)",
+      "dest": "/$1/$2"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+} 
